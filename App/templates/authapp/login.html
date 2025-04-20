@@ -9,7 +9,7 @@
     /* General Styles */
     .login-container {
         font-family: 'Poppins', sans-serif;
-        background: url('{% static "images/login-bg.png" %}') no-repeat center/cover; /* Background photo */
+        background: url('{% static "images/login-bg.jpg" %}') no-repeat center/cover; /* Background photo */
         min-height: 100vh;
         display: flex;
         justify-content: center;
@@ -325,9 +325,7 @@
 
 <div class="login-container">
     <div class="login-card">
-        <h2 class="brand-heading">
-            <span>P</span><span>o</span><span>s</span><span>i</span><span>t</span><span>i</span><span>v</span><span>i</span><span>t</span><span>y</span><span> </span><span>A</span><span>_</span><span>Z</span>
-        </h2>
+        <h2 class="brand-heading">Shivani Foundation</h2>
         <h2>Login to Your Account</h2>
         <form method="POST" class="login-form needs-validation" novalidate>
             {% csrf_token %}
