@@ -1,0 +1,575 @@
+{% extends 'authapp/base.html' %}
+{% load static %}
+
+{% block title %}Manage About Us - Shivani Foundation{% endblock %}
+
+{% block content %}
+<style>
+    /* General Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f8fafc;
+        font-family: 'Poppins', sans-serif;
+        color: #2d3748;
+        line-height: 1.6;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+        background: linear-gradient(135deg, #4c78ff 0%, #1e3a8a 100%);
+        border-radius: 12px;
+        padding: 25px;
+        height: fit-content;
+        box-shadow: 0 6px 20px rgba(76, 120, 255, 0.15);
+        position: sticky;
+        top: 20px;
+    }
+
+    .sidebar a {
+        color: #ffffff;
+        font-weight: 500;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+        text-decoration: none;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+        background-color: rgba(255, 255, 255, 0.25);
+        transform: translateX(5px);
+    }
+
+    /* Header Styling */
+    .header {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 20px 35px;
+        border-left: 5px solid #4c78ff;
+    }
+
+    .header h3 {
+        font-weight: 700;
+        color: #4c78ff;
+        letter-spacing: 0.5px;
+    }
+
+    /* Card Styling */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 35px;
+        background: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+        background: linear-gradient(90deg, #f8fafc, #ffffff);
+        border-bottom: none;
+        padding: 25px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-header h4 {
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    /* Form Elements */
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        padding: 12px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #4c78ff;
+        box-shadow: 0 0 8px rgba(76, 120, 255, 0.25);
+        outline: none;
+    }
+
+    .btn-primary {
+        background: #4c78ff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #3b5ce0;
+        transform: translateY(-2px);
+    }
+
+    .btn-warning, .btn-danger {
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-warning:hover, .btn-danger:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Table Styling */
+    .table {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .table th {
+        background: #f1f5f9;
+        color: #2d3748;
+        font-weight: 700;
+        padding: 15px;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 15px;
+    }
+
+    /* Alerts */
+    .alert {
+        border-radius: 10px;
+        padding: 15px 20px;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <header class="header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3>Shivani Foundation | Admin Dashboard</h3>
+            <div>
+                <span class="text-muted">Hi, {{ user.full_name }} | </span>
+                <a href="{% url 'logout' %}" class="text-primary fw-bold">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Sidebar and Content -->
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            <div class="sidebar">
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'backend_page' %}">Manage Home Page</a></li>
+                    <li><a href="{% url 'manage_about_us' %}" class="active">Manage About Us</a></li>
+                    <li><a href="#">Manage Our Work</a></li>
+                    <li><a href="#">Manage Features</a></li>
+                    <li><a href="{% url 'manage_projects' %}">Manage Projects</a></li>
+                    <li><a href="{% url 'manage_media' %}">Manage Media</a></li>
+                    <li><a href="#">Manage Campaign</a></li>
+                    <li><a href="{% url 'manage_blog' %}">Manage Blog</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10">
+            <!-- Introduction Section -->
+            <div id="introduction" class="card">
+                <div class="card-header"><h4>Introduction</h4></div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if about_us %}
+                                <tr>
+                                    <td>{{ about_us.introduction_title }}</td>
+                                    <td>{{ about_us.introduction_description }}</td>
+                                    <td>
+                                        <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="3" class="text-center">No introduction available.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <form method="POST" action="{% url 'manage_about_us' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="introduction">
+                        {{ introduction_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Mission and Vision Section -->
+            <div id="mission-vision" class="card">
+                <div class="card-header"><h4>Mission and Vision</h4></div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Mission Title</th>
+                                <th>Mission Description</th>
+                                <th>Vision Title</th>
+                                <th>Vision Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if about_us %}
+                                <tr>
+                                    <td>{{ about_us.mission_title }}</td>
+                                    <td>{{ about_us.mission_description }}</td>
+                                    <td>{{ about_us.vision_title }}</td>
+                                    <td>{{ about_us.vision_description }}</td>
+                                    <td>
+                                        <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="5" class="text-center">No mission and vision available.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <form method="POST" action="{% url 'manage_about_us' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="mission_vision">
+                        {{ mission_vision_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Our Story Section -->
+            <div id="our-story" class="card">
+                <div class="card-header"><h4>Our Story</h4></div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Milestones</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if about_us %}
+                                <tr>
+                                    <td>{{ about_us.history_title }}</td>
+                                    <td>{{ about_us.history_description }}</td>
+                                    <td>
+                                        <ul>
+                                            {% for milestone in about_us.get_milestones_list %}
+                                                <li>{{ milestone }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="4" class="text-center">No story available.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <form method="POST" action="{% url 'manage_about_us' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="history">
+                        {{ history_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Core Values Section -->
+            <div id="core-values" class="card">
+                <div class="card-header"><h4>Core Values</h4></div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Values</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if about_us %}
+                                <tr>
+                                    <td>{{ about_us.core_values_title }}</td>
+                                    <td>
+                                        <ul>
+                                            {% for value in about_us.get_core_values_list %}
+                                                <li>{{ value }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="3" class="text-center">No core values available.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <form method="POST" action="{% url 'manage_about_us' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="core_values">
+                        {{ core_values_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Programs Section -->
+            <div id="programs" class="card">
+                <div class="card-header"><h4>Programs</h4></div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Programs</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if about_us %}
+                                <tr>
+                                    <td>{{ about_us.programs_title }}</td>
+                                    <td>
+                                        <ul>
+                                            {% for program in about_us.get_programs_list %}
+                                                <li>{{ program }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="3" class="text-center">No programs available.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <form method="POST" action="{% url 'manage_about_us' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="programs">
+                        {{ programs_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Team Members Section -->
+            <div id="team-members" class="card">
+                <div class="card-header"><h4>Team Members</h4></div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if about_us %}
+                                <tr>
+                                    <td>{{ about_us.team_title }}</td>
+                                    <td colspan="2">
+                                        <ul>
+                                            {% for member in about_us.team_members.all %}
+                                                <li>{{ member.name }} - {{ member.role }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit Title</a>
+                                        <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                    </td>
+                                </tr>
+                                {% for member in about_us.team_members.all %}
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ member.name }}</td>
+                                        <td>{{ member.role }}</td>
+                                        <td>
+                                            <a href="{% url 'edit_team_member' member.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_team_member' member.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this team member?');">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr><td colspan="4" class="text-center">No team members available.</td></tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr><td colspan="4" class="text-center">No team members available.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <form method="POST" action="{% url 'manage_about_us' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="team_title">
+                        {{ team_title_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save Title</button>
+                    </form>
+                    <form method="POST" action="{% url 'manage_team_member' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ team_member_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save Team Member</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Impact Section -->
+            <div id="impact" class="card">
+                <div class="card-header"><h4>Impact</h4></div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if about_us %}
+                                <tr>
+                                    <td>{{ about_us.impact_title }}</td>
+                                    <td>
+                                        <p>{{ about_us.impact_description|linebreaks }}</p>
+                                        <ul>
+                                            {% for impact in about_us.get_impact_list %}
+                                                <li>{{ impact }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="3" class="text-center">No impact available.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <form method="POST" action="{% url 'manage_about_us' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="impact">
+                        {{ impact_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Call to Action Section -->
+            <div id="cta" class="card">
+                <div class="card-header"><h4>Call to Action</h4></div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Text</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if about_us %}
+                                <tr>
+                                    <td>{{ about_us.cta_text }}</td>
+                                    <td>
+                                        <a href="{% url 'edit_about_us' about_us.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{% url 'delete_about_us' about_us.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="2" class="text-center">No CTA text available.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <form method="POST" action="{% url 'manage_about_us' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="cta">
+                        {{ cta_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+<!-- Custom JavaScript for Sidebar Highlight -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentUrl = window.location.pathname;
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            if (link.getAttribute('href') === currentUrl) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+{% endblock %}
